@@ -1,0 +1,32 @@
+services:
+  postgres-inspections:
+    container_name: postgres-inspections
+    image: postgres:16
+    environment:
+      POSTGRES_DB: automatch_inspections
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata-inspections:/var/lib/postgresql/data
+    networks: [ automatch-net ]
+
+  inspections-service:
+    container_name: automatch-inspections
+    build: .
+    depends_on:
+      - postgres-inspections
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-inspections:5432/automatch_inspections
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8080:8080"
+    networks: [ automatch-net ]
+
+networks:
+  automatch-net:
+
+volumes:
+  pgdata-inspections:
