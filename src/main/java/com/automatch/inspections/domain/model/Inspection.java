@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Inspection {
-    private final UUID id; // generado en servidor
-    private final VehicleId vehicleId; // referencia externa
+    private final UUID id;
+    private final VehicleId vehicleId;
     private InspectionStatus status;
     private LocalDateTime scheduledAt;
     private InspectorId inspectorId;
@@ -23,6 +23,24 @@ public class Inspection {
         this.status = InspectionStatus.REQUESTED;
         this.createdAt = Instant.now();
         this.updatedAt = this.createdAt;
+    }
+
+    public Inspection(UUID id,
+            VehicleId vehicleId,
+            InspectionStatus status,
+            LocalDateTime scheduledAt,
+            InspectorId inspectorId,
+            String notes,
+            Instant createdAt,
+            Instant updatedAt) {
+        this.id = id;
+        this.vehicleId = vehicleId;
+        this.status = status;
+        this.scheduledAt = scheduledAt;
+        this.inspectorId = inspectorId;
+        this.notes = notes;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public static Inspection requestFor(VehicleId vehicleId) {

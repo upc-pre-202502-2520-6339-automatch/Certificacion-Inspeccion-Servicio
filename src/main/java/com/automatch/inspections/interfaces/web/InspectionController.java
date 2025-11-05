@@ -1,10 +1,13 @@
 package com.automatch.inspections.interfaces.web;
 
 import com.automatch.inspections.application.InspectionApplicationService;
+import com.automatch.inspections.interfaces.web.dto.CreateInspectionRequest;
+import com.automatch.inspections.interfaces.web.dto.RecordInspectionResultRequest;
+import com.automatch.inspections.interfaces.web.dto.ScheduleInspectionRequest;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,22 +22,19 @@ public class InspectionController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Map<String, String> body) {
-        UUID vehicleId = UUID.fromString(body.get("vehicleId"));
-        var i = app.requestInspection(vehicleId);
+    public ResponseEntity<?> create(@RequestBody CreateInspectionRequest request) {
+        var i = app.requestInspection(request.vehicleId());
         return ResponseEntity.ok(Map.of(
                 "inspectionId", i.getId(),
                 "status", i.getStatus().toString()));
     }
 
     @PostMapping("/{inspectionId}/schedule")
-    public ResponseEntity<?> schedule(@PathVariable UUID inspectionId,
-            @RequestBody Map<String, String> body) {
+    public ResponseEntity<?> schedule(
+            @PathVariable UUID inspectionId,
+            @RequestBody ScheduleInspectionRequest request) {
 
-        LocalDateTime when = LocalDateTime.parse(body.get("when"));
-        UUID inspectorId = UUID.fromString(body.get("inspectorId"));
-
-        var i = app.schedule(inspectionId, when, inspectorId);
+        var i = app.schedule(inspectionId, request.when(), request.inspectorId());
 
         return ResponseEntity.ok(Map.of(
                 "inspectionId", i.getId(),
@@ -43,13 +43,11 @@ public class InspectionController {
     }
 
     @PostMapping("/{inspectionId}/result")
-    public ResponseEntity<?> recordResult(@PathVariable UUID inspectionId,
-            @RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> recordResult(
+            @PathVariable UUID inspectionId,
+            @RequestBody RecordInspectionResultRequest request) {
 
-        boolean passed = (boolean) body.get("passed");
-        String notes = (String) body.get("notes");
-
-        var i = app.recordResult(inspectionId, passed, notes);
+        var i = app.recordResult(inspectionId, request.passed(), request.notes());
 
         return ResponseEntity.ok(Map.of(
                 "inspectionId", i.getId(),

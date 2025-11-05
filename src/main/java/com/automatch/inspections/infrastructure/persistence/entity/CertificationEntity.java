@@ -12,8 +12,11 @@ import lombok.Data;
 @Table(name = "certifications")
 public class CertificationEntity {
     @Id
-    @Column(columnDefinition = "uuid")
+    @GeneratedValue
     private UUID id;
+    @Version
+    @Column(nullable = false)
+    private Long version = 0L;
     @Column(nullable = false, columnDefinition = "uuid")
     private UUID inspectionId;
     @Column(nullable = false, columnDefinition = "uuid")

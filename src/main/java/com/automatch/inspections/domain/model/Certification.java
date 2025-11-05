@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public class Certification {
-    private final UUID id; // generado en servidor
+    private final UUID id;
     private final UUID inspectionId;
     private final VehicleId vehicleId;
     private final LocalDate issuedAt;
@@ -16,7 +16,7 @@ public class Certification {
     private Instant createdAt;
 
     private Certification(UUID inspectionId, VehicleId vehicleId, LocalDate expiresAt) {
-        this.id = UUID.randomUUID();
+        this.id = null;
         this.inspectionId = inspectionId;
         this.vehicleId = vehicleId;
         this.issuedAt = LocalDate.now();

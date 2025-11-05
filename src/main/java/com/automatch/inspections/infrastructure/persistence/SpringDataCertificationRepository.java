@@ -24,8 +24,11 @@ public class SpringDataCertificationRepository implements CertificationRepositor
     public Certification save(Certification certification) {
         CertificationEntity entity = PersistenceMapper.toEntity(certification);
         CertificationEntity saved = jpa.save(entity);
-        // para simplificar retorno, no necesitamos reconstruir dominio completo
-        return certification;
+        try {
+            return PersistenceMapper.toDomain(saved);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
