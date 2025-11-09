@@ -1,4 +1,29 @@
 services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+    networks: [ automatch-net ]
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    networks: [ automatch-net ]
+
+
   postgres-inspections:
     container_name: postgres-inspections
     image: postgres:16
@@ -17,12 +42,13 @@ services:
     build: .
     depends_on:
       - postgres-inspections
+      - kafka
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-inspections:5432/automatch_inspections
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
     ports:
-      - "8080:8080"
+      - "8088:8088"
     networks: [ automatch-net ]
 
 networks:
